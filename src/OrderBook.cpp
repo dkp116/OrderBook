@@ -1,15 +1,41 @@
+#include <algorithm>
 #include "OrderBook.hpp"
 
-void OrderBook::AddOrder(Order newOrderPlaced){
-    Type TypeofOrder = newOrderPlaced.getType();
-    if(TypeofOrder == Type::BUY){
-        buyOrders.push_back(newOrderPlaced);
+void OrderBook::AddOrder(const Order &newOrderPlaced)
+{
+    if (newOrderPlaced.getType() == Type::BUY)
+    {
+        Bids.push_back(newOrderPlaced);
+        ReOrderQueue(Bids);
     }
-
-    else{
-        sellOrders.push_back(newOrderPlaced);
-
+    else
+    {
+        Asks.push_back(newOrderPlaced);
+        ReOrderQueue(Asks);
     }
+}
 
-    return;
+void OrderBook::ReOrderQueue(std::deque<Order> &orders)
+{
+    if (orders.empty())
+        return;
+
+    Type type = orders.front().getType();
+
+    if (type == Type::BUY)
+    {
+        std::sort(orders.begin(), orders.end(),
+                  [](const Order &a, const Order &b)
+                  {
+                      return a.getPrice() > b.getPrice();
+                  });
+    }
+    else
+    {
+        std::sort(orders.begin(), orders.end(),
+                  [](const Order &a, const Order &b)
+                  {
+                      return a.getPrice() < b.getPrice();
+                  });
+    }
 }
