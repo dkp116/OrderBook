@@ -1,5 +1,6 @@
 #ifndef ORDERBOOK_HPP
 #define ORDERBOOK_HPP
+#include "Order.hpp"
 #include <deque>
 
 class OrderBook{
@@ -8,6 +9,12 @@ class OrderBook{
 
     std::deque<int> buyOrders;
     std::deque<int> SellOrders;
+
+    public:
+    
+    OrderBook();
+
+
     
 
 
