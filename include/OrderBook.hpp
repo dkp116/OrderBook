@@ -8,11 +8,12 @@ class OrderBook{
     private:
 
     std::deque<int> buyOrders;
-    std::deque<int> SellOrders;
+    std::deque<int> sellOrders;
 
     public:
     
     OrderBook();
+    void AddOrder(Order newOrderPlaced);
 
 
     
