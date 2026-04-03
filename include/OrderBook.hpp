@@ -3,23 +3,18 @@
 #include "Order.hpp"
 #include <deque>
 
-class OrderBook{
+class OrderBook
+{
 
-    private:
-
+private:
     std::deque<Order> buyOrders;
     std::deque<Order> sellOrders;
 
-    public:
-    
-    OrderBook();
+public:
+    OrderBook() {};
     void AddOrder(Order newOrderPlaced);
-
-
-    
-
-
+    const std::deque<Order>& getBuyOrders() const { return buyOrders; }
+    const std::deque<Order>& getSellOrders() const { return sellOrders; }
 };
 
-
-#endif 
+#endif
