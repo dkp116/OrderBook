@@ -1,6 +1,6 @@
-set(This tests)
+set(This OrderBookTests)
 
-set(Sources tests.cpp)
+set(Sources OrderBookTests.cpp)
 
 add_executable(${This} ${Sources})
 
@@ -10,4 +10,6 @@ target_link_libraries(${This}
     OrderBook
 )
 
-add_test(NAME ${This} COMMAND ${This})
+include(GoogleTest)
+
+gtest_discover_tests(${This})
