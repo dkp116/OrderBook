@@ -7,8 +7,8 @@ class OrderBook{
 
     private:
 
-    std::deque<int> buyOrders;
-    std::deque<int> sellOrders;
+    std::deque<Order> buyOrders;
+    std::deque<Order> sellOrders;
 
     public:
     

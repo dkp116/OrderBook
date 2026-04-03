@@ -7,8 +7,8 @@ enable_testing()
 add_subdirectory(googletest)
 
 
-add_library(OrderBook INTERFACE)
-target_include_directories(OrderBook INTERFACE include)
+add_library(OrderBook   src/OrderBook.cpp)
+target_include_directories(OrderBook PUBLIC include)
 
 
 add_executable(OrderBookApp src/main.cpp)
