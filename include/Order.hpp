@@ -12,15 +12,18 @@ enum Type
 class Order
 {
 private:
-    std::map<int, double> quantityAndPrice;
     Type typeofOrder;
+    int quantity_;
+    double price_;
+    double time_;
 
 public:
-    Order(Type typeofOrder, std::map<int, double> quantityAndPrice)
-        : typeofOrder(typeofOrder), quantityAndPrice(quantityAndPrice) {}
+    Order(Type typeofOrder, int quantity, double price)
+        : typeofOrder(typeofOrder), quantity_(quantity), price_(price) {}
 
     Type getType() const { return typeofOrder; }
-    const std::map<int, double> &getQuantityAndPrice() const { return quantityAndPrice; }
+    double getPrice() const { return price_; }
+    double getQuantity() const { return quantity_; }
 };
 
 #endif

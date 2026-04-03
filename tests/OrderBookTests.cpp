@@ -3,72 +3,91 @@
 #include "Order.hpp"
 #include "OrderBook.hpp"
 
-#include <map>
-
-
 TEST(OrderTest, ConstructorStoresTypeCorrectly)
 {
-    std::map<int,double> qp = {{100, 5.0}};
-
-    Order order(BUY, qp);
+    Order order(BUY, 5, 100.0);
 
     EXPECT_EQ(order.getType(), BUY);
 }
 
-
-TEST(OrderTest, ConstructorStoresMapCorrectly)
+TEST(OrderTest, ConstructorStoresPriceCorrectly)
 {
-    std::map<int,double> qp = {
-        {100, 5.0},
-        {101, 3.0}
-    };
+    Order order(SELL, 3, 101.5);
 
-    Order order(SELL, qp);
-
-    EXPECT_EQ(order.getQuantityAndPrice().size(), 2);
-    EXPECT_EQ(order.getQuantityAndPrice().at(100), 5.0);
-    EXPECT_EQ(order.getQuantityAndPrice().at(101), 3.0);
+    EXPECT_DOUBLE_EQ(order.getPrice(), 101.5);
 }
 
+TEST(OrderTest, ConstructorStoresQuantityCorrectly)
+{
+    Order order(BUY, 7, 99.0);
+
+    EXPECT_EQ(order.getQuantity(), 7);
+}
 
 TEST(OrderBookTest, BuyOrderAddedToBuySide)
 {
     OrderBook ob;
 
-    std::map<int,double> qp = {{100, 5.0}};
-    Order order(BUY, qp);
+    Order order(BUY, 5, 100.0);
 
     ob.AddOrder(order);
 
-    EXPECT_EQ(ob.getBuyOrders().size(), 1);
-    EXPECT_EQ(ob.getSellOrders().size(), 0);
+    EXPECT_EQ(ob.getBids().size(), 1);
+    EXPECT_EQ(ob.getAsks().size(), 0);
 }
-
 
 TEST(OrderBookTest, SellOrderAddedToSellSide)
 {
     OrderBook ob;
 
-    std::map<int,double> qp = {{105, 2.0}};
-    Order order(SELL, qp);
+    Order order(SELL, 2, 105.0);
 
     ob.AddOrder(order);
 
-    EXPECT_EQ(ob.getBuyOrders().size(), 0);
-    EXPECT_EQ(ob.getSellOrders().size(), 1);
+    EXPECT_EQ(ob.getBids().size(), 0);
+    EXPECT_EQ(ob.getAsks().size(), 1);
 }
 
-
-TEST(OrderBookTest, MultipleOrdersAddedCorrectly)       // I would say this is an intergration test could try and mock?
+TEST(OrderBookTest, MultipleOrdersAddedCorrectly)
 {
     OrderBook ob;
 
-    Order buyOrder(BUY, {{100, 1.0}});
-    Order sellOrder(SELL, {{105, 2.0}});
+    Order buyOrder(BUY, 1, 100.0);
+    Order sellOrder(SELL, 2, 105.0);
 
     ob.AddOrder(buyOrder);
     ob.AddOrder(sellOrder);
 
-    EXPECT_EQ(ob.getBuyOrders().size(), 1);
-    EXPECT_EQ(ob.getSellOrders().size(), 1);
+    EXPECT_EQ(ob.getBids().size(), 1);
+    EXPECT_EQ(ob.getAsks().size(), 1);
+}
+
+TEST(OrderBookTest, ReorderWhenMultipleBuyOrders)
+{
+    OrderBook ob;
+
+    ob.AddOrder(Order(BUY, 1, 100.0));
+    ob.AddOrder(Order(BUY, 1, 105.0));
+    ob.AddOrder(Order(BUY, 1, 102.0));
+
+    EXPECT_EQ(ob.getBids().size(), 3);
+
+    EXPECT_DOUBLE_EQ(ob.getBids()[0].getPrice(), 105.0);
+    EXPECT_DOUBLE_EQ(ob.getBids()[1].getPrice(), 102.0);
+    EXPECT_DOUBLE_EQ(ob.getBids()[2].getPrice(), 100.0);
+}
+
+TEST(OrderBookTest, ReorderWhenMultipleSellOrders)
+{
+    OrderBook ob;
+
+    ob.AddOrder(Order(SELL, 1, 100.0));
+    ob.AddOrder(Order(SELL, 1, 105.0));
+    ob.AddOrder(Order(SELL, 1, 102.0));
+
+    EXPECT_EQ(ob.getAsks().size(), 3);
+
+    EXPECT_DOUBLE_EQ(ob.getAsks()[0].getPrice(), 100.0);
+    EXPECT_DOUBLE_EQ(ob.getAsks()[1].getPrice(), 102.0);
+    EXPECT_DOUBLE_EQ(ob.getAsks()[2].getPrice(), 105.0);
 }
