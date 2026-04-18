@@ -24,6 +24,7 @@ public:
     Type getType() const { return typeofOrder; }
     double getPrice() const { return price_; }
     double getQuantity() const { return quantity_; }
+    void newQuantity(double remainingQuantity){quantity_ = remainingQuantity;}
 };
 
 #endif
