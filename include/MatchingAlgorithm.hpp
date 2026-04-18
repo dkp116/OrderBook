@@ -4,13 +4,12 @@
 #include "Order.hpp"
 #include <deque>
 
-class MatchingAlgorithm{
-    public:
+class MatchingAlgorithm
+{
+public:
     MatchingAlgorithm() {};
-    bool anyOrdersToMatch(std::deque<Order>& Bids, std::deque<Order>& Asks);
+    bool anyOrdersToMatch(std::deque<Order> &Bids, std::deque<Order> &Asks);
+    bool validateOrdersToMatch(std::deque<Order> &Bids, std::deque<Order> &Asks);
 };
-
-
-
 
 #endif
