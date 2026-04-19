@@ -28,19 +28,15 @@ void MatchingAlgorithm::FillOrder(){
     topAskOrder.newQuantity(-remainingQuantity);
 }
 
-void MatchingAlgorithm::CleanOrders(){
-    Order& topBuyOrder = Bids.front();  //why not just make these variables private right?         
-    Order& topAskOrder = Asks.front();
-    if (topBuyOrder.getQuantity() <= 0)
+void MatchingAlgorithm::CleanOrders()
+{
+    while (!Bids.empty() && Bids.front().getQuantity() <= 0)
     {
         Bids.pop_front();
-        Bids.shrink_to_fit();
     }
 
-     if (topAskOrder.getQuantity() <= 0)
+    while (!Asks.empty() && Asks.front().getQuantity() <= 0)
     {
         Asks.pop_front();
-        Asks.shrink_to_fit();
     }
-
 }
