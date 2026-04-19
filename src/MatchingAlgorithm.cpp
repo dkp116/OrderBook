@@ -20,7 +20,10 @@ bool MatchingAlgorithm::validateOrdersToMatch()
     return false;
 }
 
-double MatchingAlgorithm::FillOrder(){
-    //so we need to do  bid - asks quantity 
-    return 0.0;
+void MatchingAlgorithm::FillOrder(){
+    Order& topBuyOrder = Bids.front();           
+    Order& topAskOrder = Asks.front();
+    double remainingQuantity = topBuyOrder.getQuantity() - topAskOrder.getQuantity();
+    topBuyOrder.newQuantity(remainingQuantity);
+    topAskOrder.newQuantity(-remainingQuantity);
 }

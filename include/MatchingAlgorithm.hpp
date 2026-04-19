@@ -14,8 +14,8 @@ public:
     MatchingAlgorithm(std::deque<Order>& Bids_, std::deque<Order>& Asks_) : Bids(Bids_), Asks(Asks_) {};
     bool anyOrdersToMatch();
     bool validateOrdersToMatch();
-    double FillOrder();
-    double LogOrder();
+    void FillOrder();
+    double LogOrder();      //maybe make a logger class that we will use to log the difference transactions
 };
 
 #endif
