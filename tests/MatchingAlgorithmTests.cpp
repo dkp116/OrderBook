@@ -76,3 +76,30 @@ TEST(MatchingAlgorithmTest, CleanOrders)
     algo.CleanOrders();
     ASSERT_TRUE(asks.empty());
 }
+
+
+TEST(MatchingAlgorithmTest, MatchExecutesTradeAndCleansOrders)
+{
+    std::deque<Order> bids = {Order(BUY, 1, 120.0)};
+    std::deque<Order> asks = {Order(SELL, 1, 110.0)};
+
+    MatchingAlgorithm algo(bids, asks);
+
+    algo.matchTopOfBook(); 
+
+    ASSERT_TRUE(bids.empty());
+    ASSERT_TRUE(asks.empty());
+}
+
+TEST(MatchingAlgorithmTest, MatchExecutesTradeAndCleansOrdersLeaveRemaining)
+{
+    std::deque<Order> bids = {Order(BUY, 1, 120.0)};
+    std::deque<Order> asks = {Order(SELL, 2, 110.0)};
+
+    MatchingAlgorithm algo(bids, asks);
+
+    algo.matchTopOfBook(); 
+
+    ASSERT_TRUE(bids.empty());
+    ASSERT_TRUE(!asks.empty());
+}
