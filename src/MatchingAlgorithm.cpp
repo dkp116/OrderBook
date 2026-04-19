@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "MatchingAlgorithm.hpp"
 
 bool MatchingAlgorithm::anyOrdersToMatch()
@@ -25,14 +26,15 @@ void MatchingAlgorithm::FillOrder(){
     Order& topAskOrder = Asks.front();
     double remainingQuantityBids = topBuyOrder.getQuantity() - topAskOrder.getQuantity();
     double remainingQuanityAsks = -remainingQuantityBids;
-    if(remainingQuantityBids < 0){
-        remainingQuantityBids = 0;
-    }
-    else if(remainingQuanityAsks < 0){
-        remainingQuanityAsks = 0;
-    }
+    MakeQuantityNonNegative(remainingQuantityBids, remainingQuanityAsks);
     topBuyOrder.newQuantity(remainingQuantityBids);
     topAskOrder.newQuantity(remainingQuanityAsks);
+}
+
+void MatchingAlgorithm::MakeQuantityNonNegative(double &remainingQuantityBids, double &remainingQuanityAsks)
+{
+    remainingQuantityBids = std::max(0.0, remainingQuantityBids);
+    remainingQuanityAsks  = std::max(0.0, remainingQuanityAsks);
 }
 
 void MatchingAlgorithm::CleanOrders()
