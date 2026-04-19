@@ -91,3 +91,36 @@ TEST(OrderBookTest, ReorderWhenMultipleSellOrders)
     EXPECT_DOUBLE_EQ(ob.getAsks()[1].getPrice(), 102.0);
     EXPECT_DOUBLE_EQ(ob.getAsks()[2].getPrice(), 105.0);
 }
+
+TEST(OrderBookTest, AddOrderAndMatchTriggersMatching)
+{
+    OrderBook ob;
+
+    ob.addOrderAndMatch(Order(BUY, 1, 120.0));
+    ob.addOrderAndMatch(Order(SELL, 1, 110.0));
+
+    EXPECT_TRUE(ob.getBids().empty());
+    EXPECT_TRUE(ob.getAsks().empty());
+}
+
+TEST(OrderBookTest, NoMatchWhenPricesDoNotCross)
+{
+    OrderBook ob;
+
+    ob.addOrderAndMatch(Order(BUY, 1, 100.0));
+    ob.addOrderAndMatch(Order(SELL, 1, 110.0));
+
+    EXPECT_EQ(ob.getBids().size(), 1);
+    EXPECT_EQ(ob.getAsks().size(), 1);
+}
+
+TEST(OrderBookTest, PartialFillKeepsRemainingQuantity)
+{
+    OrderBook ob;
+
+    ob.AddOrder(Order(BUY, 5, 120.0));
+    ob.addOrderAndMatch(Order(SELL, 2, 110.0));
+
+    EXPECT_EQ(ob.getBids().front().getQuantity(), 3);
+    EXPECT_TRUE(ob.getAsks().empty());
+}

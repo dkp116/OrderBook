@@ -39,3 +39,12 @@ void OrderBook::ReOrderQueue(std::deque<Order> &orders)
                   });
     }
 }
+
+void OrderBook::MatchOrders(){
+    Matcher.matchTopOfBook();
+}
+
+void OrderBook::addOrderAndMatch(const Order &newOrderPlaced){
+    AddOrder(newOrderPlaced);
+    MatchOrders();
+}

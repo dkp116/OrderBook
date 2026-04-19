@@ -22,6 +22,9 @@ private:
 
     const std::deque<Order> &getBids() const { return Bids; }
     const std::deque<Order> &getAsks() const { return Asks; }
+
+    void MatchOrders();
+    void addOrderAndMatch(const Order &newOrderPlaced);
 };
 
 #endif
