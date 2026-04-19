@@ -15,6 +15,7 @@ public:
     bool anyOrdersToMatch();
     bool validateOrdersToMatch();
     void FillOrder();
+    void CleanOrders();
     double LogOrder();      //maybe make a logger class that we will use to log the difference transactions
 };
 
