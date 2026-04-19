@@ -64,3 +64,15 @@ TEST(MatchingAlgorithmTest, FillOrder)
     ASSERT_EQ(asks.front().getQuantity(), 2);
     ASSERT_EQ(bids.front().getQuantity(), -2);
 }
+
+
+TEST(MatchingAlgorithmTest, CleanOrders)
+{
+    std::deque<Order> bids = {Order(BUY, 1, 120.0)};
+    std::deque<Order> asks = {Order(SELL, 0, 110.0)};
+
+    MatchingAlgorithm algo(bids, asks);
+
+    algo.CleanOrders();
+    ASSERT_TRUE(asks.empty());
+}
