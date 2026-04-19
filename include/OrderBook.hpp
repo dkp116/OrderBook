@@ -2,6 +2,7 @@
 #define ORDERBOOK_HPP
 
 #include "Order.hpp"
+#include "MatchingAlgorithm.hpp"
 #include <deque>
 
 class OrderBook
@@ -9,9 +10,9 @@ class OrderBook
 private:
     std::deque<Order> Bids;
     std::deque<Order> Asks;
+    MatchingAlgorithm Matcher;
 
-public:
-    OrderBook() {};
+    public : OrderBook() : Matcher(Bids, Asks) {};
 
     void AddOrder(const Order &newOrderPlaced);
     void ReOrderQueue(std::deque<Order> &orders);
