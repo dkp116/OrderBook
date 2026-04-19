@@ -5,50 +5,50 @@
 
 TEST(MatchingAlgorithmTest, ReturnsFalseWhenBothSidesEmpty)
 {
-    MatchingAlgorithm algo;
-
     std::deque<Order> bids;
     std::deque<Order> asks;
 
-    EXPECT_FALSE(algo.anyOrdersToMatch(bids, asks));
+    MatchingAlgorithm algo(bids, asks);
+
+    EXPECT_FALSE(algo.anyOrdersToMatch());
 }
 
 TEST(MatchingAlgorithmTest, ReturnsFalseWhenAsksEmpty)
 {
-    MatchingAlgorithm algo;
-
     std::deque<Order> bids = {Order(BUY, 1, 100.0)};
     std::deque<Order> asks;
 
-    EXPECT_FALSE(algo.anyOrdersToMatch(bids, asks));
+    MatchingAlgorithm algo(bids, asks);
+
+    EXPECT_FALSE(algo.anyOrdersToMatch());
 }
 
 TEST(MatchingAlgorithmTest, ReturnsFalseWhenBidsEmpty)
 {
-    MatchingAlgorithm algo;
-
-    std::deque<Order> bids = {Order(BUY, 1, 100.0)};
+    std::deque<Order> bids;
     std::deque<Order> asks = {Order(SELL, 1, 100.0)};
 
-    EXPECT_TRUE(algo.anyOrdersToMatch(bids, asks));
+    MatchingAlgorithm algo(bids, asks);
+
+    EXPECT_FALSE(algo.anyOrdersToMatch());
 }
 
 TEST(MatchingAlgorithmTest, OrdersCanBeFilled)
 {
-    MatchingAlgorithm algo;
-
     std::deque<Order> bids = {Order(BUY, 1, 100.0)};
     std::deque<Order> asks = {Order(SELL, 1, 100.0)};
 
-    EXPECT_TRUE(algo.validateOrdersToMatch(bids, asks));
+    MatchingAlgorithm algo(bids, asks);
+
+    EXPECT_TRUE(algo.validateOrdersToMatch());
 }
 
-TEST(MatchingAlgorithmTest, OrdersCanNotBeFilled)
+TEST(MatchingAlgorithmTest, OrdersCannotBeFilled)
 {
-    MatchingAlgorithm algo;
-
     std::deque<Order> bids = {Order(BUY, 1, 100.0)};
     std::deque<Order> asks = {Order(SELL, 1, 110.0)};
 
-    EXPECT_FALSE(algo.validateOrdersToMatch(bids, asks));
+    MatchingAlgorithm algo(bids, asks);
+
+    EXPECT_FALSE(algo.validateOrdersToMatch());
 }
