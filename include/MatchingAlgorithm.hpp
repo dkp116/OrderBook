@@ -15,6 +15,7 @@ public:
     bool anyOrdersToMatch();
     bool validateOrdersToMatch();
     void FillOrder();
+    void MakeQuantityNonNegative(double &remainingQuantityBids, double &remainingQuanityAsks);
     void CleanOrders();
     void matchTopOfBook();
 };
