@@ -6,10 +6,16 @@
 
 class MatchingAlgorithm
 {
+private:
+    std::deque<Order>& Bids;
+    std::deque<Order>& Asks;
+
 public:
-    MatchingAlgorithm() {};
-    bool anyOrdersToMatch(std::deque<Order> &Bids, std::deque<Order> &Asks);
-    bool validateOrdersToMatch(std::deque<Order> &Bids, std::deque<Order> &Asks);
+    MatchingAlgorithm(std::deque<Order>& Bids_, std::deque<Order>& Asks_) : Bids(Bids_), Asks(Asks_) {};
+    bool anyOrdersToMatch();
+    bool validateOrdersToMatch();
+    double FillOrder();
+    double LogOrder();
 };
 
 #endif

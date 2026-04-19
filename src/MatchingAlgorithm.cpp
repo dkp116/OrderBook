@@ -1,6 +1,6 @@
 #include "MatchingAlgorithm.hpp"
 
-bool MatchingAlgorithm::anyOrdersToMatch(std::deque<Order> &Bids, std::deque<Order> &Asks)
+bool MatchingAlgorithm::anyOrdersToMatch()
 {
     if (!Bids.empty() && !Asks.empty())
     {
@@ -9,7 +9,7 @@ bool MatchingAlgorithm::anyOrdersToMatch(std::deque<Order> &Bids, std::deque<Ord
     return false;
 }
 
-bool MatchingAlgorithm::validateOrdersToMatch(std::deque<Order> &Bids, std::deque<Order> &Asks)
+bool MatchingAlgorithm::validateOrdersToMatch()
 {
     Order topBuyOrder = Bids.front();
     Order topAskOrder = Asks.front();
@@ -18,4 +18,9 @@ bool MatchingAlgorithm::validateOrdersToMatch(std::deque<Order> &Bids, std::dequ
         return true;
     }
     return false;
+}
+
+double MatchingAlgorithm::FillOrder(){
+    //so we need to do  bid - asks quantity 
+    return 0.0;
 }
