@@ -40,3 +40,11 @@ void MatchingAlgorithm::CleanOrders()
         Asks.pop_front();
     }
 }
+
+void MatchingAlgorithm::matchTopOfBook(){
+    while (anyOrdersToMatch() && validateOrdersToMatch())
+    {
+        FillOrder();
+        CleanOrders();
+    }
+}
