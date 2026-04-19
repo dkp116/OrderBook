@@ -23,9 +23,16 @@ bool MatchingAlgorithm::validateOrdersToMatch()
 void MatchingAlgorithm::FillOrder(){
     Order& topBuyOrder = Bids.front();           
     Order& topAskOrder = Asks.front();
-    double remainingQuantity = topBuyOrder.getQuantity() - topAskOrder.getQuantity();
-    topBuyOrder.newQuantity(remainingQuantity);
-    topAskOrder.newQuantity(-remainingQuantity);
+    double remainingQuantityBids = topBuyOrder.getQuantity() - topAskOrder.getQuantity();
+    double remainingQuanityAsks = -remainingQuantityBids;
+    if(remainingQuantityBids < 0){
+        remainingQuantityBids = 0;
+    }
+    else if(remainingQuanityAsks < 0){
+        remainingQuanityAsks = 0;
+    }
+    topBuyOrder.newQuantity(remainingQuantityBids);
+    topAskOrder.newQuantity(remainingQuanityAsks);
 }
 
 void MatchingAlgorithm::CleanOrders()

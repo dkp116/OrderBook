@@ -62,7 +62,7 @@ TEST(MatchingAlgorithmTest, FillOrder)
 
     algo.FillOrder();
     ASSERT_EQ(asks.front().getQuantity(), 2);
-    ASSERT_EQ(bids.front().getQuantity(), -2);
+    ASSERT_EQ(bids.front().getQuantity(), 0);
 }
 
 
