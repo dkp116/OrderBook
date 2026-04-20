@@ -21,6 +21,7 @@ public:
     void MakeQuantityNonNegative(double &remainingQuantityBids, double &remainingQuanityAsks);
     void CleanOrders();
     void matchTopOfBook();
+    void LogTrade(double bidPrice, double askPrice,int quantity);
 };
 
 #endif
