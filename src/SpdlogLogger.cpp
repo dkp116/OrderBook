@@ -1,16 +1,12 @@
-#include "ILogger.hpp"
+#include "SpdlogLogger.hpp"
 #include "spdlog/spdlog.h"
 
-class SpdlogLogger : public ILogger
+void SpdlogLogger::logTrade(double bidPrice,
+                            double askPrice,
+                            int quantity)
 {
-public:
-    void logTrade(double bidPrice,
-                  double askPrice,
-                  int quantity) override
-    {
-        spdlog::info(
-            "TRADE | BUY @ {} <-> SELL @ {} | QTY {}",
-            bidPrice, askPrice, quantity
-        );
-    }
-};
+    spdlog::info(
+        "TRADE | BUY @ {} <-> SELL @ {} | QTY {}",
+        bidPrice, askPrice, quantity
+    );
+}

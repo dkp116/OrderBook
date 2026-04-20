@@ -30,14 +30,17 @@ target_include_directories(OrderBook PUBLIC include)
 add_library(MatchingAlgorithm src/MatchingAlgorithm.cpp)
 target_include_directories(MatchingAlgorithm PUBLIC include)
 
+add_library(Logger src/SpdlogLogger.cpp)
+target_include_directories(Logger PUBLIC include)
+
 # spdlog linked where it is used
-target_link_libraries(MatchingAlgorithm PUBLIC spdlog::spdlog)
+target_link_libraries(Logger PUBLIC spdlog::spdlog)
 
 # -----------------------
 # App
 # -----------------------
 add_executable(OrderBookApp src/main.cpp)
-target_link_libraries(OrderBookApp PRIVATE OrderBook MatchingAlgorithm)
+target_link_libraries(OrderBookApp PRIVATE OrderBook MatchingAlgorithm Logger)
 
 # -----------------------
 # Tests
