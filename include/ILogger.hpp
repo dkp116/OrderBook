@@ -1,3 +1,6 @@
+#ifndef ILOGGER_HPP
+#define ILOGGER_HPP
+
 class ILogger
 {
 public:
@@ -8,3 +11,4 @@ public:
                           int quantity) = 0;
 };
 
+#endif

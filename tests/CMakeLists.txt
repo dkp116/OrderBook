@@ -9,6 +9,7 @@ target_link_libraries(${This}
     gtest_main
     OrderBook
     MatchingAlgorithm
+    Logger
     
 )
 

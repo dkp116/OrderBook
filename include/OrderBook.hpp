@@ -3,7 +3,9 @@
 
 #include "Order.hpp"
 #include "MatchingAlgorithm.hpp"
+#include "SpdlogLogger.hpp"
 #include <deque>
+#include <memory>
 
 class OrderBook
 {
@@ -11,8 +13,10 @@ private:
     std::deque<Order> Bids;
     std::deque<Order> Asks;
     MatchingAlgorithm Matcher;
+    std::unique_ptr<ILogger> logger;
+    
 
-    public : OrderBook() : Matcher(Bids, Asks) {};
+    public : OrderBook() : Matcher(Bids, Asks), logger(std::make_unique<SpdlogLogger>()) {};
 
     void AddOrder(const Order &newOrderPlaced);
     void ReOrderQueue(std::deque<Order> &orders);
