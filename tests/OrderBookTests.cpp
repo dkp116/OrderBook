@@ -2,6 +2,7 @@
 
 #include "Order.hpp"
 #include "OrderBook.hpp"
+#include "SpdlogLogger.hpp"
 
 TEST(OrderTest, ConstructorStoresTypeCorrectly)
 {

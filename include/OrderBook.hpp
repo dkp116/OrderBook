@@ -13,10 +13,10 @@ private:
     std::deque<Order> Bids;
     std::deque<Order> Asks;
     MatchingAlgorithm Matcher;
-    std::unique_ptr<ILogger> logger;
+    std::shared_ptr<ILogger> logger;
     
 
-    public : OrderBook() : Matcher(Bids, Asks), logger(std::make_unique<SpdlogLogger>()) {};
+    public : OrderBook() :  logger(std::make_shared<SpdlogLogger>()), Matcher(Bids, Asks,logger) {};
 
     void AddOrder(const Order &newOrderPlaced);
     void ReOrderQueue(std::deque<Order> &orders);
