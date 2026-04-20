@@ -12,23 +12,32 @@ bool MatchingAlgorithm::anyOrdersToMatch()
 
 bool MatchingAlgorithm::validateOrdersToMatch()
 {
-    Order topBuyOrder = Bids.front();
-    Order topAskOrder = Asks.front();
-    if (topBuyOrder.getPrice() >= topAskOrder.getPrice())
-    {
-        return true;
-    }
-    return false;
+    if (Bids.empty() || Asks.empty())
+        return false;
+
+    const Order& topBuyOrder = Bids.front();
+    const Order& topAskOrder = Asks.front();
+
+    return topBuyOrder.getPrice() >= topAskOrder.getPrice();
 }
 
-void MatchingAlgorithm::FillOrder(){
-    Order& topBuyOrder = Bids.front();           
-    Order& topAskOrder = Asks.front();
-    double remainingQuantityBids = topBuyOrder.getQuantity() - topAskOrder.getQuantity();
-    double remainingQuanityAsks = -remainingQuantityBids;
-    MakeQuantityNonNegative(remainingQuantityBids, remainingQuanityAsks);
-    topBuyOrder.newQuantity(remainingQuantityBids);
-    topAskOrder.newQuantity(remainingQuanityAsks);
+void MatchingAlgorithm::FillOrder()
+{
+    if (Bids.empty() || Asks.empty())
+        return;
+
+    const Order& topBuyOrder = Bids.front();
+    const Order& topAskOrder = Asks.front();
+
+    int tradeQty = std::min(topBuyOrder.getQuantity(), topAskOrder.getQuantity());
+
+    LogTrade(topBuyOrder.getPrice(), topAskOrder.getPrice(), tradeQty);
+
+    double remainingBuy  = topBuyOrder.getQuantity() - tradeQty;
+    double remainingSell = topAskOrder.getQuantity() - tradeQty;
+
+    Bids.front().newQuantity(std::max(0.0, remainingBuy));
+    Asks.front().newQuantity(std::max(0.0, remainingSell));
 }
 
 void MatchingAlgorithm::MakeQuantityNonNegative(double &remainingQuantityBids, double &remainingQuanityAsks)
@@ -56,4 +65,8 @@ void MatchingAlgorithm::matchTopOfBook(){
         FillOrder();
         CleanOrders();
     }
+}
+
+void MatchingAlgorithm::LogTrade(double bidPrice, double askPrice,int quantity){
+    logger->logTrade(bidPrice,askPrice,quantity);
 }
