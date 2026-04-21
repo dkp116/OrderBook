@@ -27,6 +27,9 @@ FetchContent_MakeAvailable(spdlog)
 add_library(OrderBook src/OrderBook.cpp)
 target_include_directories(OrderBook PUBLIC include)
 
+add_library(Order src/Order.cpp)
+target_include_directories(Order PUBLIC include)
+
 add_library(MatchingAlgorithm src/MatchingAlgorithm.cpp)
 target_include_directories(MatchingAlgorithm PUBLIC include)
 
@@ -40,7 +43,7 @@ target_link_libraries(Logger PUBLIC spdlog::spdlog)
 # App
 # -----------------------
 add_executable(OrderBookApp src/main.cpp)
-target_link_libraries(OrderBookApp PRIVATE OrderBook MatchingAlgorithm Logger)
+target_link_libraries(OrderBookApp PRIVATE Order OrderBook MatchingAlgorithm Logger)
 
 # -----------------------
 # Tests
