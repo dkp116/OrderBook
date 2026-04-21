@@ -5,6 +5,7 @@
 #include "SpdlogLogger.hpp"
 #include <deque>
 #include<memory>
+#include <cstdint>
 
 class MatchingAlgorithm
 {
@@ -21,7 +22,7 @@ public:
     void MakeQuantityNonNegative(double &remainingQuantityBids, double &remainingQuanityAsks);
     void CleanOrders();
     void matchTopOfBook();
-    void LogTrade(double bidPrice, double askPrice,int quantity);
+    void LogTrade(uint64_t bidID, uint64_t askID, double priceExectued, int quantity);
 };
 
 #endif
