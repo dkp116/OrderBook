@@ -3,21 +3,29 @@
 #include "Order.hpp"
 #include "MatchingAlgorithm.hpp"
 #include "ILogger.hpp"
+#include <cstdint>
+
 
 class MockLogger : public ILogger
 {
 public:
     int callCount = 0;
 
-    double lastBid = 0;
-    double lastAsk = 0;
+    uint64_t lastBidID = 0;
+    uint64_t lastAskID = 0;
+    double lastPrice = 0.0;
     int lastQty = 0;
 
-    void logTrade(double bidPrice, double askPrice, int quantity) override
+    void logTrade(uint64_t bidID,
+                  uint64_t askID,
+                  double priceExecuted,
+                  int quantity) override
     {
         callCount++;
-        lastBid = bidPrice;
-        lastAsk = askPrice;
+
+        lastBidID = bidID;
+        lastAskID = askID;
+        lastPrice = priceExecuted;
         lastQty = quantity;
     }
 };
@@ -134,8 +142,11 @@ TEST(MatchingAlgorithmTest, MatchExecutesTradeAndCleansOrdersLeaveRemaining)
 
 TEST(MatchingAlgorithmTest, LogsTradeOnFillOrder)
 {
-    std::deque<Order> bids = { Order(BUY, 1, 120.0) };
-    std::deque<Order> asks = { Order(SELL, 1, 110.0) };
+    Order buy(BUY, 1, 120.0);
+    Order sell(SELL, 1, 110.0);
+
+    std::deque<Order> bids = { buy };
+    std::deque<Order> asks = { sell };
 
     auto mockLogger = std::make_shared<MockLogger>();
     MatchingAlgorithm algo(bids, asks, mockLogger);
@@ -143,7 +154,9 @@ TEST(MatchingAlgorithmTest, LogsTradeOnFillOrder)
     algo.FillOrder();
 
     EXPECT_EQ(mockLogger->callCount, 1);
-    EXPECT_EQ(mockLogger->lastBid, 120.0);
-    EXPECT_EQ(mockLogger->lastAsk, 110.0);
+
+    EXPECT_EQ(mockLogger->lastBidID, buy.getID());
+    EXPECT_EQ(mockLogger->lastAskID, sell.getID());
+
     EXPECT_EQ(mockLogger->lastQty, 1);
 }

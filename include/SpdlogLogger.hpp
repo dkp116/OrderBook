@@ -6,8 +6,9 @@
 class SpdlogLogger : public ILogger
 {
 public:
-    void logTrade(double bidPrice,
-                  double askPrice,
+    void logTrade(uint64_t bidID,
+                  uint64_t askID,
+                  double priceExectued,
                   int quantity) override;
 };
 
