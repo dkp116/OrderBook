@@ -25,6 +25,16 @@ TEST(OrderTest, ConstructorStoresQuantityCorrectly)
     EXPECT_EQ(order.getQuantity(), 7);
 }
 
+
+TEST(OrderTest, GetOrderID)
+{
+    Order order1(BUY, 7, 99.0);
+    Order order2(BUY, 7, 100.0);
+
+    EXPECT_EQ(order2.getID(), 2);
+}
+
+
 TEST(OrderBookTest, BuyOrderAddedToBuySide)
 {
     OrderBook ob;
