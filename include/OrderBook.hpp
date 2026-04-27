@@ -13,22 +13,20 @@ private:
     std::deque<Order> Bids;
     std::deque<Order> Asks;
     std::shared_ptr<ILogger> logger;
-    MatchingAlgorithm Matcher;
-    
 
-    public : OrderBook() :   logger(std::make_shared<SpdlogLogger>()),   Matcher(Bids, Asks,logger) {};
+public:
+    OrderBook()
+        : logger(std::make_shared<SpdlogLogger>()) {}
 
     void AddOrder(const Order &newOrderPlaced);
     void ReOrderQueue(std::deque<Order> &orders);
-
-    std::deque<Order> &getBids() { return Bids; }
-    std::deque<Order> &getAsks() { return Asks; }
-
-    const std::deque<Order> &getBids() const { return Bids; }
-    const std::deque<Order> &getAsks() const { return Asks; }
-
     void MatchOrders();
     void addOrderAndMatch(const Order &newOrderPlaced);
+        std::deque<Order>& getBids() { return Bids; }
+    std::deque<Order>& getAsks() { return Asks; }
+
+    const std::deque<Order>& getBids() const { return Bids; }
+    const std::deque<Order>& getAsks() const { return Asks; }
 };
 
 #endif
