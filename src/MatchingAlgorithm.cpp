@@ -15,8 +15,8 @@ bool MatchingAlgorithm::validateOrdersToMatch()
     if (Bids.empty() || Asks.empty())
         return false;
 
-    const Order &topBuyOrder = Bids.front();
-    const Order &topAskOrder = Asks.front();
+    const Order &topBuyOrder = Bids.begin()->second;
+    const Order &topAskOrder = Asks.begin()->second;
 
     return topBuyOrder.getPrice() >= topAskOrder.getPrice();
 }
@@ -26,8 +26,8 @@ void MatchingAlgorithm::FillOrder()
     if (Bids.empty() || Asks.empty())
         return;
 
-    Order &topBuyOrder = Bids.front();
-    Order &topAskOrder = Asks.front();
+    Order &topBuyOrder = Bids.begin()->second;
+    Order &topAskOrder = Asks.begin()->second;
 
     int tradeQty = std::min(topBuyOrder.getQuantity(),
                             topAskOrder.getQuantity());
@@ -53,14 +53,20 @@ void MatchingAlgorithm::MakeQuantityNonNegative(double &remainingQuantityBids, d
 
 void MatchingAlgorithm::CleanOrders()
 {
-    while (!Bids.empty() && Bids.front().getQuantity() <= 0)
+    while (!Bids.empty() && Bids.begin()->second.getQuantity() <= 0)
     {
-        Bids.pop_front();
+        auto it = Bids.begin();
+        uint64_t id = it->second.getID();
+        Bids.erase(it);
+        bidIterators.erase(id);
     }
 
-    while (!Asks.empty() && Asks.front().getQuantity() <= 0)
+    while (!Asks.empty() && Asks.begin()->second.getQuantity() <= 0)
     {
-        Asks.pop_front();
+        auto it = Asks.begin();
+        uint64_t id = it->second.getID();
+        Asks.erase(it);
+        askIterators.erase(id);
     }
 }
 

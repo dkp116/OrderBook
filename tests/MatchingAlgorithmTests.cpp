@@ -3,6 +3,9 @@
 #include "Order.hpp"
 #include "MatchingAlgorithm.hpp"
 #include "ILogger.hpp"
+#include <map>
+#include <unordered_map>
+#include <functional>
 #include <cstdint>
 
 
@@ -32,80 +35,134 @@ public:
 
 TEST(MatchingAlgorithmTest, ReturnsFalseWhenBothSidesEmpty)
 {
-    std::deque<Order> bids;
-    std::deque<Order> asks;
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
 
     auto log = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, log);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, log);
 
     EXPECT_FALSE(algo.anyOrdersToMatch());
 }
 
 TEST(MatchingAlgorithmTest, ReturnsFalseWhenAsksEmpty)
 {
-    std::deque<Order> bids = {Order(BUY, 1, 100.0)};
-    std::deque<Order> asks;
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
+
+    Order buy(BUY, 1, 100.0);
+    auto it = bids.insert({buy.getPrice(), buy});
+    bidIterators[buy.getID()] = it;
 
     auto log = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, log);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, log);
 
     EXPECT_FALSE(algo.anyOrdersToMatch());
 }
 
 TEST(MatchingAlgorithmTest, ReturnsFalseWhenBidsEmpty)
 {
-    std::deque<Order> bids;
-    std::deque<Order> asks = {Order(SELL, 1, 100.0)};
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
+
+    Order sell(SELL, 1, 100.0);
+    auto it = asks.insert({sell.getPrice(), sell});
+    askIterators[sell.getID()] = it;
 
     auto log = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, log);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, log);
 
     EXPECT_FALSE(algo.anyOrdersToMatch());
 }
 
 TEST(MatchingAlgorithmTest, OrdersCanBeFilled)
 {
-    std::deque<Order> bids = {Order(BUY, 1, 100.0)};
-    std::deque<Order> asks = {Order(SELL, 1, 100.0)};
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
+
+    Order buy(BUY, 1, 100.0);
+    auto bit = bids.insert({buy.getPrice(), buy});
+    bidIterators[buy.getID()] = bit;
+
+    Order sell(SELL, 1, 100.0);
+    auto ait = asks.insert({sell.getPrice(), sell});
+    askIterators[sell.getID()] = ait;
 
     auto log = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, log);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, log);
 
     EXPECT_TRUE(algo.validateOrdersToMatch());
 }
 
 TEST(MatchingAlgorithmTest, OrdersCannotBeFilled)
 {
-    std::deque<Order> bids = {Order(BUY, 1, 100.0)};
-    std::deque<Order> asks = {Order(SELL, 1, 110.0)};
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
+
+    Order buy(BUY, 1, 100.0);
+    auto bit = bids.insert({buy.getPrice(), buy});
+    bidIterators[buy.getID()] = bit;
+
+    Order sell(SELL, 1, 110.0);
+    auto ait = asks.insert({sell.getPrice(), sell});
+    askIterators[sell.getID()] = ait;
 
     auto log = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, log);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, log);
 
     EXPECT_FALSE(algo.validateOrdersToMatch());
 }
 
 TEST(MatchingAlgorithmTest, FillOrder)
 {
-    std::deque<Order> bids = {Order(BUY, 1, 120.0)};
-    std::deque<Order> asks = {Order(SELL, 3, 110.0)};
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
+
+    Order buy(BUY, 1, 120.0);
+    auto bit = bids.insert({buy.getPrice(), buy});
+    bidIterators[buy.getID()] = bit;
+
+    Order sell(SELL, 3, 110.0);
+    auto ait = asks.insert({sell.getPrice(), sell});
+    askIterators[sell.getID()] = ait;
 
     auto log = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, log);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, log);
 
     algo.FillOrder();
 
-    ASSERT_EQ(asks.front().getQuantity(), 2);
-    ASSERT_EQ(bids.front().getQuantity(), 0);
+    ASSERT_EQ(asks.begin()->second.getQuantity(), 2);
+    ASSERT_EQ(bids.begin()->second.getQuantity(), 0);
 }
 
 TEST(MatchingAlgorithmTest, CleanOrders)
 {
-    std::deque<Order> bids = {Order(BUY, 1, 120.0)};
-    std::deque<Order> asks = {Order(SELL, 0, 110.0)};
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
+
+    Order buy(BUY, 1, 120.0);
+    auto bit = bids.insert({buy.getPrice(), buy});
+    bidIterators[buy.getID()] = bit;
+
+    Order sell(SELL, 0, 110.0);
+    auto ait = asks.insert({sell.getPrice(), sell});
+    askIterators[sell.getID()] = ait;
 
     auto log = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, log);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, log);
 
     algo.CleanOrders();
 
@@ -114,11 +171,21 @@ TEST(MatchingAlgorithmTest, CleanOrders)
 
 TEST(MatchingAlgorithmTest, MatchExecutesTradeAndCleansOrders)
 {
-    std::deque<Order> bids = {Order(BUY, 1, 120.0)};
-    std::deque<Order> asks = {Order(SELL, 1, 110.0)};
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
+
+    Order buy(BUY, 1, 120.0);
+    auto bit = bids.insert({buy.getPrice(), buy});
+    bidIterators[buy.getID()] = bit;
+
+    Order sell(SELL, 1, 110.0);
+    auto ait = asks.insert({sell.getPrice(), sell});
+    askIterators[sell.getID()] = ait;
 
     auto log = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, log);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, log);
 
     algo.matchTopOfBook();
 
@@ -128,11 +195,21 @@ TEST(MatchingAlgorithmTest, MatchExecutesTradeAndCleansOrders)
 
 TEST(MatchingAlgorithmTest, MatchExecutesTradeAndCleansOrdersLeaveRemaining)
 {
-    std::deque<Order> bids = {Order(BUY, 1, 120.0)};
-    std::deque<Order> asks = {Order(SELL, 2, 110.0)};
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
+
+    Order buy(BUY, 1, 120.0);
+    auto bit = bids.insert({buy.getPrice(), buy});
+    bidIterators[buy.getID()] = bit;
+
+    Order sell(SELL, 2, 110.0);
+    auto ait = asks.insert({sell.getPrice(), sell});
+    askIterators[sell.getID()] = ait;
 
     auto log = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, log);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, log);
 
     algo.matchTopOfBook();
 
@@ -142,14 +219,21 @@ TEST(MatchingAlgorithmTest, MatchExecutesTradeAndCleansOrdersLeaveRemaining)
 
 TEST(MatchingAlgorithmTest, LogsTradeOnFillOrder)
 {
-    Order buy(BUY, 1, 120.0);
-    Order sell(SELL, 1, 110.0);
+    std::multimap<double, Order, std::greater<double>> bids;
+    std::multimap<double, Order, std::less<double>> asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
 
-    std::deque<Order> bids = { buy };
-    std::deque<Order> asks = { sell };
+    Order buy(BUY, 1, 120.0);
+    auto bit = bids.insert({buy.getPrice(), buy});
+    bidIterators[buy.getID()] = bit;
+
+    Order sell(SELL, 1, 110.0);
+    auto ait = asks.insert({sell.getPrice(), sell});
+    askIterators[sell.getID()] = ait;
 
     auto mockLogger = std::make_shared<MockLogger>();
-    MatchingAlgorithm algo(bids, asks, mockLogger);
+    MatchingAlgorithm algo(bids, asks, bidIterators, askIterators, mockLogger);
 
     algo.FillOrder();
 

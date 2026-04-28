@@ -5,48 +5,42 @@ void OrderBook::AddOrder(const Order &newOrderPlaced)
 {
     if (newOrderPlaced.getType() == Type::BUY)
     {
-        Bids.push_back(newOrderPlaced);
-        ReOrderQueue(Bids);
+        auto it = Bids.insert({newOrderPlaced.getPrice(), newOrderPlaced});
+        bidIterators[newOrderPlaced.getID()] = it;
     }
     else
     {
-        Asks.push_back(newOrderPlaced);
-        ReOrderQueue(Asks);
-    }
-}
-
-void OrderBook::ReOrderQueue(std::deque<Order> &orders)
-{
-    if (orders.empty())
-        return;
-
-    Type type = orders.front().getType();
-
-    if (type == Type::BUY)
-    {
-        std::sort(orders.begin(), orders.end(),
-                  [](const Order &a, const Order &b)
-                  {
-                      return a.getPrice() > b.getPrice();
-                  });
-    }
-    else
-    {
-        std::sort(orders.begin(), orders.end(),
-                  [](const Order &a, const Order &b)
-                  {
-                      return a.getPrice() < b.getPrice();
-                  });
+        auto it = Asks.insert({newOrderPlaced.getPrice(), newOrderPlaced});
+        askIterators[newOrderPlaced.getID()] = it;
     }
 }
 
 void OrderBook::MatchOrders()
 {
-    MatchingAlgorithm matcher(Bids, Asks, logger);
+    MatchingAlgorithm matcher(Bids, Asks, bidIterators, askIterators, logger);
     matcher.matchTopOfBook();
 }
 
 void OrderBook::addOrderAndMatch(const Order &newOrderPlaced){
     AddOrder(newOrderPlaced);
     MatchOrders();
+}
+
+bool OrderBook::CancelOrder(uint64_t orderID)
+{
+    auto bidIt = bidIterators.find(orderID);
+    if (bidIt != bidIterators.end())
+    {
+        Bids.erase(bidIt->second);
+        bidIterators.erase(bidIt);
+        return true;
+    }
+    auto askIt = askIterators.find(orderID);
+    if (askIt != askIterators.end())
+    {
+        Asks.erase(askIt->second);
+        askIterators.erase(askIt);
+        return true;
+    }
+    return false;
 }

@@ -4,14 +4,18 @@
 #include "Order.hpp"
 #include "MatchingAlgorithm.hpp"
 #include "SpdlogLogger.hpp"
-#include <deque>
+#include <map>
+#include <unordered_map>
+#include <functional>
 #include <memory>
 
 class OrderBook
 {
 private:
-    std::deque<Order> Bids;
-    std::deque<Order> Asks;
+    std::multimap<double, Order, std::greater<double>> Bids;
+    std::multimap<double, Order, std::less<double>> Asks;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::greater<double>>::iterator> bidIterators;
+    std::unordered_map<uint64_t, typename std::multimap<double, Order, std::less<double>>::iterator> askIterators;
     std::shared_ptr<ILogger> logger;
 
 public:
@@ -19,14 +23,11 @@ public:
         : logger(std::make_shared<SpdlogLogger>()) {}
 
     void AddOrder(const Order &newOrderPlaced);
-    void ReOrderQueue(std::deque<Order> &orders);
     void MatchOrders();
     void addOrderAndMatch(const Order &newOrderPlaced);
-        std::deque<Order>& getBids() { return Bids; }
-    std::deque<Order>& getAsks() { return Asks; }
-
-    const std::deque<Order>& getBids() const { return Bids; }
-    const std::deque<Order>& getAsks() const { return Asks; }
+    bool CancelOrder(uint64_t orderID);
+    const std::multimap<double, Order, std::greater<double>>& getBidsMap() const { return Bids; }
+    const std::multimap<double, Order, std::less<double>>& getAsksMap() const { return Asks; }
 };
 
 #endif
