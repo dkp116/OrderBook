@@ -1,6 +1,6 @@
 set(This OrderBookTests)
 
-set(Sources OrderBookTests.cpp MatchingAlgorithmTests.cpp)
+set(Sources OrderBookTests.cpp MatchingAlgorithmTests.cpp ServerTest.cpp)
 
 add_executable(${This} ${Sources})
 
@@ -11,6 +11,8 @@ target_link_libraries(${This}
     OrderBook
     MatchingAlgorithm
     Logger
+    Server
+    
     
 )
 

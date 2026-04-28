@@ -39,11 +39,21 @@ target_include_directories(Logger PUBLIC include)
 # spdlog linked where it is used
 target_link_libraries(Logger PUBLIC spdlog::spdlog)
 
+add_library(Server src/Server.cpp)
+# target_include_directories(Server PUBLIC include)
+target_link_libraries(Server
+    PUBLIC
+        OrderBook
+        Order
+        MatchingAlgorithm
+        Logger
+)
+
 # -----------------------
 # App
 # -----------------------
 add_executable(OrderBookApp src/main.cpp)
-target_link_libraries(OrderBookApp PRIVATE Order OrderBook MatchingAlgorithm Logger)
+target_link_libraries(OrderBookApp PRIVATE Order OrderBook MatchingAlgorithm Logger Server)
 
 # -----------------------
 # Tests
